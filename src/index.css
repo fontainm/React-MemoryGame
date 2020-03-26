@@ -4,6 +4,14 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: rgb(255,255,255);
+  /* background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(90,152,166,1) 100%); */
+}
+
+.title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2rem;
 }
 
 .memoryCard {
