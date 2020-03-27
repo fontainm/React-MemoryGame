@@ -1,17 +1,21 @@
+html {
+  height: 100vh;
+  background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(40,185,216, 1) 100%);
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Catamaran';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: rgb(255,255,255);
-  /* background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(90,152,166,1) 100%); */
+  /* background: rgba(40,185,216, 1); */
 }
 
 .title {
   text-align: center;
   text-transform: uppercase;
-  font-size: 2rem;
+  font-size: 6rem;
+  margin: 0;
+  color: rgba(40,185,216, 1);
 }
 
 .memoryCard {

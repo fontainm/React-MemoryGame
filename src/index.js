@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Tilt from 'react-tilt';
 import Flip from 'react-reveal/Flip';
+import RubberBand from 'react-reveal/RubberBand';
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -9,31 +10,36 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Container from '@material-ui/core/Container';
 
 import { memoryImages } from './images';
+import bgImg from './images/bg.jpg';
 
 import './index.css';
 
 function MemoryCard(props) {
-  let styles;
-  if (props.card.faceDown && !props.card.solved) {
-    styles = { backgroundColor: 'rgba(0, 0, 0, 0.5)' };
-  } else if (props.card.solved) {
-    styles = { filter: 'grayscale(100%)', opacity: '50%' }
-  } else {
-    styles = { filter: 'grayscale(100%)' };
-  }
+  // let styles;
+  // if (props.card.faceDown && !props.card.solved) {
+  //   styles = { backgroundImage: '', background: 'radial-gradient(circle, rgba(64,219,222,1) 0%, rgba(0,151,255,1) 100%)'  };
+  // } 
+  // else if (props.card.solved) {
+  //   styles = { filter: 'grayscale(0%)' }
+  // } else {
+  //   styles = { filter: 'grayscale(0%)' };
+  // }
   return(
-    <Grid item xs={4} sm={4} md={3} xl={2}>
+    <Grid item xs={4} sm={4} md={3} xl={3}>
         <Tilt className="Tilt" options={{ max: 30, scale: 1.1 }}>
-      <Flip right cascade when={!props.card.solved}>
-          <Card className="memoryCard">
-            <CardMedia 
-              style={ styles }
-              image={memoryImages[props.card.pairId]}
-              className="memoryImg"
-              onClick={props.card.solved || !props.card.faceDown ? null : () => props.onClick(props.card.id)}            
-              />
-          </Card>
-      </Flip>
+          <Flip right spy={props.card.faceDown}>
+          <RubberBand spy={props.card.solved}>
+              <Card className="memoryCard">
+                <CardMedia 
+                  // style={ styles }
+                  // image={ props.card.faceDown ? memoryImages[props.card.pairId] : bgImg }
+                  image={ props.card.faceDown ? bgImg : memoryImages[props.card.pairId] }
+                  className="memoryImg"
+                  onClick={props.card.solved || !props.card.faceDown ? null : () => props.onClick(props.card.id)}            
+                  />
+              </Card>
+            </RubberBand>
+          </Flip>
         </Tilt>
     </Grid>
   );
@@ -57,7 +63,7 @@ class MemoryGame extends React.Component {
       currentOpenCards = 1;
     } else if (currentOpenCards === 1) {
       currentOpenCards = 2;
-      this.checkMatch(clickedCard, this.state.memoryCards.find((card) => { return (card.faceDown === false) }));
+      this.checkMatch(clickedCard, this.state.memoryCards.find((card) => { return (!card.faceDown && !card.solved) }));
     } else if (currentOpenCards === 2) {
       currentOpenCards = 1;
       this.allCardsDown();
@@ -78,6 +84,7 @@ class MemoryGame extends React.Component {
 
   checkMatch = (card1, card2) => {
     if (card1.pairId === card2.pairId && card1.id !== card2.id) {
+      card1.faceDown = false;
       let newMemoryCards = this.state.memoryCards;
       newMemoryCards.find((card) => { return card.id === card1.id }).solved = true;
       newMemoryCards.find((card) => { return card.id === card2.id }).solved = true;
@@ -92,6 +99,7 @@ class MemoryGame extends React.Component {
     let newMemoryCards = this.state.memoryCards;
     newMemoryCards.forEach((card) => {
       card.faceDown = true;
+      if (card.solved) card.faceDown = false;
     });
     this.setState({
       memoryCards: newMemoryCards
@@ -100,7 +108,7 @@ class MemoryGame extends React.Component {
 
   render() {
     return(
-      <Container maxWidth={false}>
+      <Container maxWidth="lg">
         <h1 className="title">Memory Game</h1>
         <Grid container spacing={3}>
           { this.state.memoryCards.map((card, index) => {
