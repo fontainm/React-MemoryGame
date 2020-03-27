@@ -1,21 +1,59 @@
-html {
-  height: 100vh;
-  background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(40,185,216, 1) 100%);
+:root {
+  --priColor: #0B5F73;
+  --secColor: #ffffff;
+}
+
+html, body {
+  /* background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(40,185,216, 1) 100%); */
+  background-color: var(--secColor);
 }
 
 body {
-  font-family: 'Catamaran';
+  font-family: 'Baloo 2';
+  font-weight: 700;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* background: rgba(40,185,216, 1); */
 }
 
-.title {
+.gameStats {
   text-align: center;
-  text-transform: uppercase;
-  font-size: 6rem;
-  margin: 0;
-  color: rgba(40,185,216, 1);
+  color: var(--priColor) !important;
+  text-transform: lowercase;
+  font-size: 4vw;
+  cursor: default; 
+  height: 5vw;
+  line-height: 5vw;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 5vw;
+  color: var(--priColor) !important;
+}
+
+.stat {
+  font-size: 2vw;
+  vertical-align: middle;
+}
+
+@media only screen and (min-width: 1300px) {
+  .gameStats {
+    font-size: 48pt;
+    height: 90px;
+    line-height: 90px;
+  }
+  .title {
+    font-size: 48pt;
+  }
+  .stat {
+    font-size: 24pt;
+  }
+}
+
+.gameContainer {
+
 }
 
 .memoryCard {
@@ -32,4 +70,32 @@ body {
   bottom: 0;
   right: 0;
   cursor: pointer;
+}
+
+.gameOver {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgba(255,255,255, 0.9);
+}
+
+.message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.win {
+  font-size: 5vw;
+  color: var(--priColor) !important;
+  margin: 0;
+}
+
+.restartBtn {
+  font-size: 3rem;
 }

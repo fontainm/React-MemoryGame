@@ -3,36 +3,34 @@ import ReactDOM from 'react-dom';
 import Tilt from 'react-tilt';
 import Flip from 'react-reveal/Flip';
 import RubberBand from 'react-reveal/RubberBand';
+import Tada from 'react-reveal/Tada';
 
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
 import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
 
 import { memoryImages } from './images';
-import bgImg from './images/bg.jpg';
+import bgImg from './images/bg3.jpg';
 
 import './index.css';
 
+const cardStyle = {
+  borderRadius: '1rem',
+  boxShadow: '2px 2px 10px grey'
+}
+
 function MemoryCard(props) {
-  // let styles;
-  // if (props.card.faceDown && !props.card.solved) {
-  //   styles = { backgroundImage: '', background: 'radial-gradient(circle, rgba(64,219,222,1) 0%, rgba(0,151,255,1) 100%)'  };
-  // } 
-  // else if (props.card.solved) {
-  //   styles = { filter: 'grayscale(0%)' }
-  // } else {
-  //   styles = { filter: 'grayscale(0%)' };
-  // }
   return(
-    <Grid item xs={4} sm={4} md={3} xl={3}>
+    <Grid item xs={4} sm={3} md={3} xl={3}>
         <Tilt className="Tilt" options={{ max: 30, scale: 1.1 }}>
           <Flip right spy={props.card.faceDown}>
           <RubberBand spy={props.card.solved}>
-              <Card className="memoryCard">
+              <Card style={cardStyle} className="memoryCard">
                 <CardMedia 
-                  // style={ styles }
-                  // image={ props.card.faceDown ? memoryImages[props.card.pairId] : bgImg }
                   image={ props.card.faceDown ? bgImg : memoryImages[props.card.pairId] }
                   className="memoryImg"
                   onClick={props.card.solved || !props.card.faceDown ? null : () => props.onClick(props.card.id)}            
@@ -45,23 +43,47 @@ function MemoryCard(props) {
   );
 }
 
+function GameOverScreen(props) {
+  return (
+    <div className="gameOver">
+      <div className="message">
+        <Tada>
+          <p className="win">
+            you win<br />
+            {props.time}<span className="stat"> seconds</span><br />
+            {props.moves}<span className="stat"> moves</span>
+          </p>
+          <Button variant="contained" className="restartBtn" onClick={props.onClick}><SettingsBackupRestoreIcon /> </Button>
+        </Tada>
+      </div>
+    </div>
+  );
+}
+
 class MemoryGame extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       openCards: 0,
-      memoryCards: shuffleCards(props.count)
+      memoryCards: shuffleCards(props.count),
+      timer: 0,
+      staringTime: 0,
+      moves: 0,
+      won: false
     };
   }
   
   handleClick = id => {
     let newMemoryCards = this.state.memoryCards.slice();
+    let newMoves = this.state.moves;
     let clickedCard = newMemoryCards.find((card) => { return card.id === id; } );
     let currentOpenCards = this.state.openCards;
 
     if (currentOpenCards === 0) {
+      this.startTimer();
       currentOpenCards = 1;
     } else if (currentOpenCards === 1) {
+      newMoves++;
       currentOpenCards = 2;
       this.checkMatch(clickedCard, this.state.memoryCards.find((card) => { return (!card.faceDown && !card.solved) }));
     } else if (currentOpenCards === 2) {
@@ -73,13 +95,32 @@ class MemoryGame extends React.Component {
     // console.log(
     //   "Clicked Pair-ID: " + clickedCard.pairId,
     //   "Clicked ID: " + clickedCard.id,
-    //   "Open Cards: " + currentOpenCards
+    //   "Open Cards: " + currentOpenCards,
+    //   "Timer: " + newTimer,
+    //   "Moves: " + newMoves
     // )
     
     this.setState({
       openCards: currentOpenCards,
-      memoryCards: newMemoryCards
+      memoryCards: newMemoryCards,
+      moves: newMoves
     });    
+  }
+
+  startTimer = () => {
+    this.setState({
+      startingTime: Date.now()
+    })
+    this.timer = setInterval(() => {
+      this.setState({
+        timer: ((Date.now() - this.state.startingTime) / 1000).toFixed(0)
+      });
+    }, 1000)
+  }
+
+  stopTimer = () => {
+    clearInterval(this.timer);
+    console.log("timer stop");
   }
 
   checkMatch = (card1, card2) => {
@@ -92,6 +133,23 @@ class MemoryGame extends React.Component {
         openCards: 0,
         memoryCards: newMemoryCards
       });
+      this.checkWin();
+    }
+  }
+
+  checkWin() {
+    let win = true;
+    this.state.memoryCards.forEach((card) => {
+      if (!card.solved) {
+        win = false;
+        return;
+      }
+    });
+    if (win) {
+      this.stopTimer();
+      this.setState({
+        won: true
+      })
     }
   }
 
@@ -105,13 +163,29 @@ class MemoryGame extends React.Component {
       memoryCards: newMemoryCards
     })
   }
+  
+  restartGame = () => {
+    this.setState({
+      openCards: 0,
+      memoryCards: shuffleCards(6),
+      timer: 0,
+      staringTime: 0,
+      moves: 0,
+      won: false
+    });
+  }
 
   render() {
     return(
-      <Container maxWidth="lg">
-        <h1 className="title">Memory Game</h1>
-        <Grid container spacing={3}>
-          { this.state.memoryCards.map((card, index) => {
+      <Container maxWidth="lg">       
+        {this.state.won ? <GameOverScreen onClick={this.restartGame} time={this.state.timer} moves={this.state.moves} /> : null}
+        <Grid container className="gameStats">
+            <Grid className="gameStatItem" item xs={6}><span className="title">my memory game</span></Grid>
+            <Grid className="gameStatItem" item xs={3}>{this.state.timer}<span className="stat"> Seconds</span></Grid>
+            <Grid className="gameStatItem" item xs={3}>{this.state.moves}<span className="stat"> Moves</span></Grid>
+        </Grid>
+        <Grid container spacing={2} className="gameContainer">
+            { this.state.memoryCards.map((card) => {
               return <MemoryCard key={card.id} card={card} onClick={(id) => this.handleClick(id)} />
             }) }
         </Grid>
