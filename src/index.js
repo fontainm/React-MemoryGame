@@ -171,7 +171,7 @@ class MemoryGame extends React.Component {
               <Grid item xs={3}>{this.state.timer}<span className="stat"> Seconds</span></Grid>
               <Grid item xs={3}>{this.state.moves}<span className="stat"> Moves</span></Grid>
           </Grid>
-          <Grid item container spacing={2} className="gameContainer" style={{height: this.state.screenHeight/6*5}}>
+          <Grid item container spacing={2} style={{height: this.state.screenHeight/6*4}}>
               { this.state.memoryCards.map((card) => {
                 return <MemoryCard key={card.id} card={card} onClick={(id) => this.handleClick(id)} />
               }) }

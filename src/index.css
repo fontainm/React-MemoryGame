@@ -55,10 +55,6 @@ body {
   }
 }
 
-.gameContainer {
-  /* max-height: 75%; */
-}
-
 .memoryCard {
   width: 100%;
   padding-top: 100%;
@@ -66,10 +62,10 @@ body {
   position: relative;
 }
 
-@media screen and (min-aspect-ratio: 2/2) {
+@media screen and (min-aspect-ratio: 1/1) {
   .memoryCard {
     width: 100%;
-    padding-top: 23vh;
+    padding-top: 20vh;
     position: relative;
   }  
 }
