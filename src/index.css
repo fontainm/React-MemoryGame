@@ -1,11 +1,13 @@
 :root {
-  --priColor: #0B5F73;
+  --priColor: #26C6DA;
   --secColor: #ffffff;
 }
 
 html, body {
-  /* background: linear-gradient(180deg, rgba(255,255,255,1) 67%, rgba(40,185,216, 1) 100%); */
-  background-color: var(--secColor);
+  background: linear-gradient(180deg, rgba(255,255,255,1) 67%, var(--priColor) 100%);
+  /* background-color: var(--secColor); */
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -22,14 +24,15 @@ body {
   text-transform: lowercase;
   font-size: 4vw;
   cursor: default; 
-  height: 5vw;
-  line-height: 5vw;
+  height: 15vh;
+  line-height: 15vh;
   margin-top: 2rem;
   margin-bottom: 2rem;
+  max-height: 25%;
 }
 
 .title {
-  font-size: 5vw;
+  font-size: 4vw;
   color: var(--priColor) !important;
 }
 
@@ -41,8 +44,8 @@ body {
 @media only screen and (min-width: 1300px) {
   .gameStats {
     font-size: 48pt;
-    height: 90px;
-    line-height: 90px;
+    height: 130px;
+    line-height: 130px;
   }
   .title {
     font-size: 48pt;
@@ -53,13 +56,22 @@ body {
 }
 
 .gameContainer {
-
+  /* max-height: 75%; */
 }
 
 .memoryCard {
   width: 100%;
   padding-top: 100%;
+  /* padding-top: 23vh; */
   position: relative;
+}
+
+@media screen and (min-aspect-ratio: 2/2) {
+  .memoryCard {
+    width: 100%;
+    padding-top: 23vh;
+    position: relative;
+  }  
 }
 
 .memoryImg {
@@ -79,15 +91,17 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: rgba(255,255,255, 0.9);
+  background-color: rgba(255,255,255, 0.7);
+  transition: opacity 2s;
+  -webkit-transition: opacity 2s;
+  opacity: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   text-align: center;
-  transform: translate(-50%, -50%);
 }
 
 .win {
@@ -97,5 +111,8 @@ body {
 }
 
 .restartBtn {
-  font-size: 3rem;
+  background-color: var(--priColor) !important;
+  color: white !important;
+  padding: 2px;
+  cursor: pointer;
 }

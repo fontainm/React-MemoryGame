@@ -8,56 +8,17 @@ import Tada from 'react-reveal/Tada';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
 import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
 
 import { memoryImages } from './images';
-import bgImg from './images/bg3.jpg';
+import bgImg from './images/bg.jpg';
 
 import './index.css';
 
 const cardStyle = {
-  borderRadius: '1rem',
+  borderRadius: '8px',
   boxShadow: '2px 2px 10px grey'
-}
-
-function MemoryCard(props) {
-  return(
-    <Grid item xs={4} sm={3} md={3} xl={3}>
-        <Tilt className="Tilt" options={{ max: 30, scale: 1.1 }}>
-          <Flip right spy={props.card.faceDown}>
-          <RubberBand spy={props.card.solved}>
-              <Card style={cardStyle} className="memoryCard">
-                <CardMedia 
-                  image={ props.card.faceDown ? bgImg : memoryImages[props.card.pairId] }
-                  className="memoryImg"
-                  onClick={props.card.solved || !props.card.faceDown ? null : () => props.onClick(props.card.id)}            
-                  />
-              </Card>
-            </RubberBand>
-          </Flip>
-        </Tilt>
-    </Grid>
-  );
-}
-
-function GameOverScreen(props) {
-  return (
-    <div className="gameOver">
-      <div className="message">
-        <Tada>
-          <p className="win">
-            you win<br />
-            {props.time}<span className="stat"> seconds</span><br />
-            {props.moves}<span className="stat"> moves</span>
-          </p>
-          <Button variant="contained" className="restartBtn" onClick={props.onClick}><SettingsBackupRestoreIcon /> </Button>
-        </Tada>
-      </div>
-    </div>
-  );
 }
 
 class MemoryGame extends React.Component {
@@ -65,12 +26,14 @@ class MemoryGame extends React.Component {
     super(props);
     this.state = {
       openCards: 0,
-      memoryCards: shuffleCards(props.count),
+      memoryCards: this.shuffleCards(),
+      screenHeight: window.innerHeight,
       timer: 0,
       staringTime: 0,
       moves: 0,
       won: false
     };
+    this.handleResize = this.handleResize.bind(this);
   }
   
   handleClick = id => {
@@ -105,6 +68,20 @@ class MemoryGame extends React.Component {
       memoryCards: newMemoryCards,
       moves: newMoves
     });    
+  }
+
+  shuffleCards = () => {
+    let memoryCards = [];
+    for (let i = 0; i < 12; i++) {
+      memoryCards[i] = {
+        id: i,
+        pairId: Math.floor(i/2),
+        faceDown: true,
+        solved: false
+      };
+    }
+    memoryCards.sort(() => Math.random() - 0.5);
+    return memoryCards;
   }
 
   startTimer = () => {
@@ -167,7 +144,7 @@ class MemoryGame extends React.Component {
   restartGame = () => {
     this.setState({
       openCards: 0,
-      memoryCards: shuffleCards(6),
+      memoryCards: this.shuffleCards(),
       timer: 0,
       staringTime: 0,
       moves: 0,
@@ -175,40 +152,89 @@ class MemoryGame extends React.Component {
     });
   }
 
+  componentDidMount() {
+    window.addEventListener("resize", this.handleResize);
+  }
+  componentWillUnmount() {
+    window.addEventListener("resize", null);
+  }
+  handleResize(screenHeight, event) {
+    this.setState({screenHeight: window.innerHeight})
+  }
+
   render() {
     return(
       <Container maxWidth="lg">       
+        <Grid container direction="column" justify="flex-start" alignItems="center">
+          <Grid item container className="gameStats" alignItems="stretch" style={{height: this.state.screenHeight/6}}>
+              <Grid item xs={6}><span className="title">my memory game</span></Grid>
+              <Grid item xs={3}>{this.state.timer}<span className="stat"> Seconds</span></Grid>
+              <Grid item xs={3}>{this.state.moves}<span className="stat"> Moves</span></Grid>
+          </Grid>
+          <Grid item container spacing={2} className="gameContainer" style={{height: this.state.screenHeight/6*5}}>
+              { this.state.memoryCards.map((card) => {
+                return <MemoryCard key={card.id} card={card} onClick={(id) => this.handleClick(id)} />
+              }) }
+          </Grid>
+        </Grid>
         {this.state.won ? <GameOverScreen onClick={this.restartGame} time={this.state.timer} moves={this.state.moves} /> : null}
-        <Grid container className="gameStats">
-            <Grid className="gameStatItem" item xs={6}><span className="title">my memory game</span></Grid>
-            <Grid className="gameStatItem" item xs={3}>{this.state.timer}<span className="stat"> Seconds</span></Grid>
-            <Grid className="gameStatItem" item xs={3}>{this.state.moves}<span className="stat"> Moves</span></Grid>
-        </Grid>
-        <Grid container spacing={2} className="gameContainer">
-            { this.state.memoryCards.map((card) => {
-              return <MemoryCard key={card.id} card={card} onClick={(id) => this.handleClick(id)} />
-            }) }
-        </Grid>
       </Container>
     );
   }
 }
 
-function shuffleCards(count) {
-  let memoryCards = [];
-  for (let i = 0; i < count*2; i++) {
-    memoryCards[i] = {
-      id: i,
-      pairId: Math.floor(i/2),
-      faceDown: true,
-      solved: false
-    };
-  }
-  memoryCards.sort(() => Math.random() - 0.5);
-  return memoryCards;
+function MemoryCard(props) {
+  return(
+    <Grid item xs={4} sm={3} md={3} xl={3}>
+        <Tilt className="Tilt" options={{ max: 30, scale: 1.1 }}>
+          <Flip right spy={props.card.faceDown}>
+          <RubberBand spy={props.card.solved}>
+              <Card style={cardStyle} className="memoryCard">
+                <CardMedia 
+                  image={ props.card.faceDown ? bgImg : memoryImages[props.card.pairId] }
+                  className="memoryImg"
+                  onClick={props.card.solved || !props.card.faceDown ? null : () => props.onClick(props.card.id)}            
+                  />
+              </Card>
+            </RubberBand>
+          </Flip>
+        </Tilt>
+    </Grid>
+  );
+}
+
+function GameOverScreen(props) {
+  return (
+    <div className="gameOver">
+      <Container maxWidth="lg">
+        <Grid container spacing={0} alignItems="center" justify="center">
+          <Grid item xs={8} sm={6}>
+            <Tada>
+              <Card style={cardStyle} className="message">
+                <CardContent>
+                  <Grid container alignItems="center" justify="center">
+                    <Grid item xs={12} className="title">you win</Grid>
+                    <Grid item xs={6} className="title">{props.time} <span className="stat"> seconds</span></Grid>
+                    <Grid item xs={6} className="title">{props.moves} <span className="stat"> moves</span></Grid>
+                    <Grid item xs={10}>
+                      <Tilt className="Tilt" options={{ max: 30, scale: 1.1 }}>
+                        <Card style={cardStyle} className="restartBtn title" onClick={props.onClick}>
+                          restart
+                        </Card>
+                      </Tilt>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Tada>
+          </Grid>
+        </Grid>
+      </Container>
+    </div>
+  );
 }
 
 ReactDOM.render(
-  <MemoryGame count={6} />,
+  <MemoryGame />,
   document.getElementById('root')
 );
