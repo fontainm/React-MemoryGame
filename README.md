@@ -2,9 +2,7 @@
 
 Simple & minimalistic memory game.
 
-![Screenshot 1](./screenshots/1.jpg =200px)
-![Screenshot 2](./screenshots/2.jpg =200px)
-![Screenshot 3](./screenshots/3.jpg =200px)
+<img src="./screenshots/1.jpg" alt="Screenshot 1" width="200"/> <img src="./screenshots/2.jpg" alt="Screenshot 2" width="200"/> <img src="./screenshots/3.jpg" alt="Screenshot 3" width="200"/>
 
 Play it [here](https://mathiasfontain.at/memorygame).
 
