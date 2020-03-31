@@ -2,10 +2,9 @@
 
 Simple & minimalistic memory game.
 
-<img src="./screenshots/1.jpg" alt="Screenshot 1" width="33%"/>
-<img src="./screenshots/2.jpg" alt="Screenshot 2" width="33%"/>
-<img src="./screenshots/3.jpg" alt="Screenshot 3" width="33%"/>
-
+![Screenshot 1](./screenshots/1.jpg =200px)
+![Screenshot 2](./screenshots/2.jpg =200px)
+![Screenshot 3](./screenshots/3.jpg =200px)
 
 Play it [here](https://mathiasfontain.at/memorygame).
 
